@@ -549,6 +549,26 @@ int TestRange() {
     return 1;
 }
 
+//idhar Randn dalneka
+
+int TestCopy() {
+    int size = 69;
+    float A[size];
+    float B[size];
+    for(int i = 0; i < size; i++) {
+        A[i] = i + 420;
+    }
+    CopyDriver(A, B, size);
+    for(int i = 0; i < size; i++) {
+        if (A[i] != B[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST COPY FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST COPY SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -573,11 +593,13 @@ int main() {
     failedCount += (TestExp() == 0);
     failedCount += (TestLog() == 0);
     failedCount += (TestRange() == 0);
+    failedCount += (TestCopy() == 0);
 
+    printf(ANSI_COLOR_YELLOW "\n\n[RESULT] " ANSI_COLOR_RESET);
     if (!failedCount) {
-        printf(ANSI_COLOR_YELLOW ANSI_COLOR_GREEN "\n\nALL TESTS PASSED SUCCESSFULLY\n" ANSI_COLOR_RESET);
+        printf(ANSI_COLOR_GREEN "ALL TESTS PASSED SUCCESSFULLY\n" ANSI_COLOR_RESET);
     } else {
-        printf(ANSI_COLOR_YELLOW ANSI_COLOR_RED "\n\n[!NOTICE!] %d TESTS FAILED\n" ANSI_COLOR_RESET, failedCount);
+        printf(ANSI_COLOR_RED " %d TESTS FAILED\n" ANSI_COLOR_RESET, failedCount);
     }
 
 }
