@@ -20,7 +20,7 @@ void TestOnes() {
     int row = 10;
     int col = 10;
     float A[row*col];
-    ZerosDriver(A, row, col);
+    OnesDriver(A, row, col);
     for(int i = 0;i<row*col;i++){
         if(A[i]!=1.0){
             printf("TEST ONES FAILED\n");
@@ -336,22 +336,24 @@ void TestMaxAS(){
 void TestBroadcast() {
     int row = 5;
     int col = 5;
-    float A[row];
+    float A[col];
     float B[row*col];
     float B_ac[row*col];
-    for(int i = 0; i< row;i++) {
-        A[i] = i+1;
-        for(int j = 0; j < col ; j++)
+    for(int i = 0; i< col;i++) {
+        
+        for(int j = 0; j < row ; j++)
         {
-            B_ac[i*col+j] = A[i];
+            A[i] = i+1;
+            B_ac[j*col+i] = A[i];
         }
     }
 
     BroadcastArrayToMatrixDriver(A, B, row, col);
+    
     for(int  i = 0;i<row*col;i++) {
-        if(B[i]!=B_ac[i]){
-            printf("TEST BROADCAST FAILED\n");
-            return;
+        if(B_ac[i]!=B[i]){
+             printf("TEST BROADCAST FAILED\n");
+             return;
         }
     }
     printf("TEST BROADCAST SUCCESS\n");
@@ -400,4 +402,6 @@ int main() {
     TestMaxAS();
     TestDivScMat();
     TestReduceMean();
+    TestBroadcast();
+    TestSetDiagonal();
 }
