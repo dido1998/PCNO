@@ -41,6 +41,7 @@ int TestRandn();
 int TestCopy();
 int TestStack();
 int TestIsGreaterThan();
+int TestIsEqual();
 
 int TestZeros() {
     int row = 10;
@@ -623,14 +624,38 @@ int TestIsGreaterThan() {
         }
     }
     IsGreaterThanDriver(A, chonk, R, size);
-    for(int i = 0; i < size; i++)
-    {
+    for(int i = 0; i < size; i++) {
         if (R[i] != R_kr[i]) {
             printf(ANSI_COLOR_YELLOW "TEST ISGREATERTHAN FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
     printf(ANSI_COLOR_GREEN "TEST ISGREATERTHAN SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestIsEqual() {
+    int size = 10;
+    int A[size];
+    int B[size];
+    int R[size];
+    int R_kr[size];
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] == B[i]) {
+            R_kr[i] = 1;
+        } else {
+            R_kr[i] = 0;
+        }
+    }
+    IsEqualDriver(A, B, R, size);
+    for(int i = 0; i < size; i++) {
+        if (R[i] != R_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST ISEQUAL FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST ISEQUAL SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -662,6 +687,7 @@ int main() {
     failedCount += (TestCopy() == 0);
     failedCount += (TestStack() == 0);
     failedCount += (TestIsGreaterThan() == 0);
+    failedCount += (TestIsEqual() == 0);
 
     printf(ANSI_COLOR_YELLOW "\n\n[RESULT] " ANSI_COLOR_RESET);
     if (!failedCount) {
