@@ -39,6 +39,7 @@ int TestLog();
 int TestRange();
 int TestRandn();
 int TestCopy();
+int TestStack();
 
 int TestZeros() {
     int row = 10;
@@ -584,6 +585,29 @@ int TestCopy() {
     return 1;
 }
 
+int TestStack() {
+    int row = 6;
+    int col = 9;
+    float A[row * col];
+    float B[row * col];
+    for(int i = 0; i < row * col; i++) {
+        A[i] = i + 420;
+    // printf("A %f  B %f\n", A[i], B[i]);
+    }
+    StackDriver(A, B, row, col);
+    for(int i = 0, k = 0; i < row * col; i++, k++) {
+        if (k == col) {
+            k = 0;
+        }
+        if (A[k] != B[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST STACK FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST STACK SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -610,6 +634,7 @@ int main() {
     failedCount += (TestRange() == 0);
     failedCount += (TestRandn() == 0);
     failedCount += (TestCopy() == 0);
+    failedCount += (TestStack() == 0);
 
     printf(ANSI_COLOR_YELLOW "\n\n[RESULT] " ANSI_COLOR_RESET);
     if (!failedCount) {
