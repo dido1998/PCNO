@@ -265,7 +265,7 @@ void SubDriver(float A[], float B[], float C[], int row, int col) {
     cudaMemcpy(d_b, B, sizeof(float)*row*col, cudaMemcpyHostToDevice);
     dim3 BlockDim(col);
     dim3 GridDim(row);
-    Add<<<GridDim, BlockDim>>>(d_a, d_b, d_c);
+    Sub<<<GridDim, BlockDim>>>(d_a, d_b, d_c);
     cudaMemcpy(C, d_c, sizeof(float)*row*col, cudaMemcpyDeviceToHost); 
     cudaDeviceSynchronize();
 }
