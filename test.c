@@ -43,6 +43,7 @@ int TestStack();
 int TestIsGreaterThan();
 int TestIsEqual();
 int TestIsNotEqual();
+int TestSetWhereLessThan();
 
 int TestZeros() {
     int row = 10;
@@ -685,6 +686,31 @@ int TestIsNotEqual() {
     return 1;
 }
 
+int TestSetWhereLessThan() {
+    int size = 10;
+    float A[size];
+    float A_kr[size]; 
+    float chonkTest = 500.0;
+    float chonkSet = 1337.0;
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] < chonkTest) {
+            A_kr[i] = chonkSet;
+        } else {
+            A_kr[i] = A[i];
+        }
+    }
+    SetWhereLessThanDriver(A, chonkTest, chonkSet, size);
+    for(int i = 0; i < size; i++) {
+        if (A[i] != A_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST SETWHERELESSTHAN FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST SETWHERELESSTHAN SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -715,6 +741,8 @@ int main() {
     failedCount += (TestIsGreaterThan() == 0);
     failedCount += (TestIsEqual() == 0);
     failedCount += (TestIsNotEqual() == 0);
+    failedCount += (TestSetWhereLessThan() == 0);
+
 
     printf(ANSI_COLOR_YELLOW "\n\n[RESULT] " ANSI_COLOR_RESET);
     if (!failedCount) {
