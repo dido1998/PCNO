@@ -485,10 +485,9 @@ void RangeDriver(float A[], int size, int n) {
     
     float* d_a;
     cudaMalloc((void**)&d_a, sizeof(float)*size);
-    cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
     dim3 BlockDim(size);
     dim3 GridDim(1);
-    Range<<<GridDim, BlockDim>>>(A, n);
+    Range<<<GridDim, BlockDim>>>(d_a, n);
     cudaMemcpy(A, d_a, sizeof(float)*size, cudaMemcpyDeviceToHost);
 }
 

@@ -535,11 +535,11 @@ int TestRange() {
     float A[size];
     RangeDriver(A, size, 0);
     for(int i = 0; i < size; i++) {
-        printf("A[i] = %f, i = %d\n", A[i], i);
-        // if (A[i] != i) {
-        //     printf("TEST RANGE FAILED\n");
-        //     return 0;
-        // }
+       
+         if (A[i] != i) {
+             printf("TEST RANGE FAILED\n");
+             return 0;
+             }
     }
     printf("TEST RANGE SUCCESS\n");
     return 1;
