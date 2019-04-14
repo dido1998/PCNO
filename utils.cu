@@ -498,7 +498,7 @@ void RandnDriver(float A[], int row, int col) {
     cudaMalloc((void**)&d_a, sizeof(float)*size);
     dim3 BlockDim(col);
     dim3 GridDim(row);
-    Randn<<<GridDim, BlockDim>>>(A);
+    Randn<<<GridDim, BlockDim>>>(d_a);
     cudaMemcpy(A, d_a, sizeof(float)*size, cudaMemcpyDeviceToHost); 
 }
 

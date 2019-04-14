@@ -1,13 +1,15 @@
-/* 
-    TO-DO:
-        Add menu to print verbose or not
-        Make print Informatives
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "utils.h"
+
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
 
 int TestZeros();
 int TestOnes();
@@ -30,6 +32,13 @@ int TestNegative();
 int TestExp();
 int TestLog();
 int TestRange();
+int TestRandn();
+int TestCopy();
+int TestStack();
+int TestIsGreaterThan();
+int TestIsEqual();
+int TestIsNotEqual();
+int TestSetWhereLessThan();
 
 int TestZeros() {
     int row = 10;
@@ -38,11 +47,11 @@ int TestZeros() {
     ZerosDriver(A, row, col);
     for(int i = 0;i<row*col;i++){
         if(A[i]!=0.0){
-            printf("TEST ZEROS FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST ZEROS FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST ZEROS SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST ZEROS SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -53,11 +62,11 @@ int TestOnes() {
     OnesDriver(A, row, col);
     for(int i = 0;i<row*col;i++){
         if(A[i]!=1.0){
-            printf("TEST ONES FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST ONES FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST ONES SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST ONES SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -72,11 +81,11 @@ int TestSquare() {
     SquareDriver(A, B, row, col);
     for(int i = 0;i<row*col;i++){
         if(B[i]!=A[i]*A[i]){
-            printf("TEST SQUARE FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST SQUARE FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST SQUARE SUCCESS\n");   
+    printf(ANSI_COLOR_GREEN "TEST SQUARE SUCCESS\n" ANSI_COLOR_RESET);   
     return 1;
 }
 
@@ -99,11 +108,11 @@ int TestReduceSum() {
     for (int i = 0; i < row; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST REDUCE SUM FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST REDUCE SUM FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST REDUCE SUM SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST REDUCE SUM SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -126,11 +135,11 @@ int TestReduceMean() {
     for (int i = 0; i < row; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST REDUCE SUM FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST REDUCE SUM FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST REDUCE SUM SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST REDUCE SUM SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -153,11 +162,11 @@ int TestTranspose() {
     for (int i = 0; i < row; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST TRANSPOSE FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST TRANSPOSE FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST TRANSPOSE SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST TRANSPOSE SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -188,11 +197,11 @@ int TestDot() {
     DotDriver(A, B, C, rowa, cola, rowb, colb);
     for(int i = 0;i<rowa*colb;i++){
         if(C[i]!=C_ac[i]){
-            printf("TEST DOT FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST DOT FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST DOT SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST DOT SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -213,11 +222,11 @@ int TestMulMatSc(){
     for (int i = 0; i < row*col; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST TestMulMatSc FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST TestMulMatSc FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST TestMulMatSc SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST TestMulMatSc SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -238,11 +247,11 @@ int TestMulArSc(){
     for (int i = 0; i < row; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST TestMulArSc FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST TestMulArSc FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST TestMulArSc SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST TestMulArSc SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -263,11 +272,11 @@ int TestDivArSc(){
     for (int i = 0; i < row; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST TestDiveArSc FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST TestDiveArSc FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST TestDivArSc SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST TestDivArSc SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -288,11 +297,11 @@ int TestDivScMat(){
     for (int i = 0; i < row*col; ++i)
     {
         if(B[i]!=B_ac[i]){
-            printf("TEST TestDiveScMat FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST TestDiveScMat FAILED\n" ANSI_COLOR_RESET);
             return 0; 
         }
     }
-    printf("TEST TestDivScMAT SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST TestDivScMAT SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -320,11 +329,11 @@ int TestAdd(){
     AddDriver(A, B, C, rowa, cola);
     for(int i = 0;i<rowa*colb;i++){
         if(C[i]!=C_ac[i]){
-            printf("TEST ADD FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST ADD FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST ADD SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST ADD SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -343,10 +352,10 @@ int TestReduceSumVec2Sc(){
     ReduceSumDriver(A, &B, row);
     if(B!=B_ac)
     {
-        printf("TEST REDUCE SUM Vec2Sc FAILED\n");
+        printf(ANSI_COLOR_YELLOW "TEST REDUCE SUM Vec2Sc FAILED\n" ANSI_COLOR_RESET);
         return 0;
     }
-    printf("TEST REDUCE SUM SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST REDUCE SUM SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -369,11 +378,11 @@ int TestMaxAS(){
     MaxASDriver(A, 3.0, B, row, col);
     for(int  i = 0;i<row*col;i++) {
         if(B[i]!=B_ac[i]){
-            printf("TEST Max FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST Max FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST Max SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST Max SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -396,11 +405,11 @@ int TestBroadcast() {
     
     for(int  i = 0;i<row*col;i++) {
         if(B[i]!=B_ac[i]){
-            printf("TEST BROADCAST FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST BROADCAST FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST BROADCAST SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST BROADCAST SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -426,12 +435,12 @@ int TestSetDiagonal(){
     SetDiagonalDriver(A, 0, row, col);
     for(int  i =0 ; i<row*col;i++){
         if(A[i]!=B[i]){
-            printf("SET DIAGONAL FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST SET DIAGONAL FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
 
     }
-    printf("SET DIAGONAL SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST SET DIAGONAL SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -458,11 +467,11 @@ int TestSub(){
     SubDriver(A, B, C, rowa, cola);
     for(int i = 0;i<rowa*colb;i++){
         if(C[i]!=C_ac[i]){
-            printf("TEST SUB FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST SUB FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST SUB SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST SUB SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -480,11 +489,11 @@ int TestNegative() {
     for(int i = 0; i < row * row; i++){
 
         if(A[i] != A_neg[i]){
-            printf("TEST NEGATIVE FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST NEGATIVE FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST NEGATIVE SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST NEGATIVE SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -501,11 +510,11 @@ int TestExp() {
     ExpDriver(A, B, row * row);
     for(int i = 0; i < row * row; i++){
         if(B[i] != A_exp[i]){
-            printf("TEST EXP FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST EXP FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST EXP SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST EXP SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -522,11 +531,11 @@ int TestLog() {
     LogDriver(A, B, row * row);
     for(int i = 0; i < row * row; i++){
         if(B[i] != A_log[i]) {
-            printf("TEST LOG FAILED\n");
+            printf(ANSI_COLOR_YELLOW "TEST LOG FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
     }
-    printf("TEST LOG SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST LOG SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -535,13 +544,169 @@ int TestRange() {
     float A[size];
     RangeDriver(A, size, 0);
     for(int i = 0; i < size; i++) {
-       
-         if (A[i] != i) {
-             printf("TEST RANGE FAILED\n");
-             return 0;
-             }
+
+        if (A[i] != (float)i) {
+            printf(ANSI_COLOR_YELLOW "TEST RANGE FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
     }
-    printf("TEST RANGE SUCCESS\n");
+    printf(ANSI_COLOR_GREEN "TEST RANGE SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestRandn() {
+    int row = 6;
+    int col = 9;
+    float A[row * col];
+    RandnDriver(A, row, col);
+    for(int i = 0; i < row * col; i++) {
+        if (A[i] < 0 && A[i] > 1) {
+            printf(ANSI_COLOR_YELLOW "TEST RANDN FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST RANDN SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestCopy() {
+    int size = 69;
+    float A[size];
+    float B[size];
+    for(int i = 0; i < size; i++) {
+        A[i] = i + 420;
+    }
+    CopyDriver(A, B, size);
+    for(int i = 0; i < size; i++) {
+        if (A[i] != B[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST COPY FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST COPY SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestStack() {
+    int row = 6;
+    int col = 9;
+    float A[row * col];
+    float B[row * col];
+    for(int i = 0; i < row * col; i++) {
+        A[i] = i + 420;
+    }
+    StackDriver(A, B, row, col);
+    for(int i = 0, k = 0; i < row * col; i++, k++) {
+        if (k == col) {
+            k = 0;
+        }
+        if (A[k] != B[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST STACK FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST STACK SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestIsGreaterThan() {
+    int size = 10;
+    float A[size];
+    int R[size];
+    int R_kr[size];
+    float chonk = 500.0;
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] > chonk) {
+            R_kr[i] = 1;
+        } else {
+            R_kr[i] = 0;
+        }
+    }
+    IsGreaterThanDriver(A, chonk, R, size);
+    for(int i = 0; i < size; i++) {
+        if (R[i] != R_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST ISGREATERTHAN FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+>>>>>>> 345660adb28089e3c35de5e811451a223af0a2e1
+    }
+    printf(ANSI_COLOR_GREEN "TEST ISGREATERTHAN SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestIsEqual() {
+    int size = 10;
+    int A[size];
+    int B[size];
+    int R[size];
+    int R_kr[size];
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] == B[i]) {
+            R_kr[i] = 1;
+        } else {
+            R_kr[i] = 0;
+        }
+    }
+    IsEqualDriver(A, B, R, size);
+    for(int i = 0; i < size; i++) {
+        if (R[i] != R_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST ISEQUAL FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST ISEQUAL SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestIsNotEqual() {
+    int size = 10;
+    int A[size];
+    int B[size];
+    int R[size];
+    int R_kr[size];
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] != B[i]) {
+            R_kr[i] = 1;
+        } else {
+            R_kr[i] = 0;
+        }
+    }
+    IsNotEqualDriver(A, B, R, size);
+    for(int i = 0; i < size; i++) {
+        if (R[i] != R_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST ISNOTEQUAL FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST ISNOTEQUAL SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
+int TestSetWhereLessThan() {
+    int size = 10;
+    float A[size];
+    float A_kr[size]; 
+    float chonkTest = 500.0;
+    float chonkSet = 1337.0;
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] < chonkTest) {
+            A_kr[i] = chonkSet;
+        } else {
+            A_kr[i] = A[i];
+        }
+    }
+    SetWhereLessThanDriver(A, chonkTest, chonkSet, size);
+    for(int i = 0; i < size; i++) {
+        if (A[i] != A_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST SETWHERELESSTHAN FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST SETWHERELESSTHAN SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
 }
 
@@ -569,11 +734,20 @@ int main() {
     failedCount += (TestExp() == 0);
     failedCount += (TestLog() == 0);
     failedCount += (TestRange() == 0);
+    failedCount += (TestRandn() == 0);
+    failedCount += (TestCopy() == 0);
+    failedCount += (TestStack() == 0);
+    failedCount += (TestIsGreaterThan() == 0);
+    failedCount += (TestIsEqual() == 0);
+    failedCount += (TestIsNotEqual() == 0);
+    failedCount += (TestSetWhereLessThan() == 0);
 
+
+    printf(ANSI_COLOR_YELLOW "\n\n[RESULT] " ANSI_COLOR_RESET);
     if (!failedCount) {
-        printf("\n\n[!NOTICE!] ALL TESTS PASSED SUCCESSFULLY\n");
+        printf(ANSI_COLOR_GREEN "ALL TESTS PASSED SUCCESSFULLY\n" ANSI_COLOR_RESET);
     } else {
-        printf("\n\n[!NOTICE!] %d TESTS FAILED\n", failedCount);
+        printf(ANSI_COLOR_RED " %d TESTS FAILED\n" ANSI_COLOR_RESET, failedCount);
     }
 
 }
