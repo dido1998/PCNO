@@ -469,12 +469,10 @@ int TestNegative() {
     for(int i = 0; i < row * row; i++) {
         A[i] = rand() % 10000;
         A_neg[i] = -1 * A[i];
-        printf("A_neg %f\n", A_neg[i]);
     }
     
     NegativeDriver(A, row * row);
     for(int i = 0; i < row * row; i++){
-        printf(" A[i] = %f | A_ac[i] = %f\n", A[i], A_neg[i]);
         if(A[i] != A_neg[i]){
             printf("TEST NEGATIVE FAILED\n");
             return 0;
