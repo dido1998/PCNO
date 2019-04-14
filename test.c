@@ -1,8 +1,3 @@
-/* 
-    TO-DO:
-        Add menu to print verbose or not
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
