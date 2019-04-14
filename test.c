@@ -28,6 +28,7 @@ int TestSetDiagonal();
 int TestSub();
 int TestNegative();
 int TestExp();
+int TestLog();
 
 int TestZeros() {
     int row = 10;
@@ -505,6 +506,27 @@ int TestExp() {
     return 1;
 }
 
+int TestLog() {
+    int row = 5;
+    float A[row * row];
+    float B[row * row];
+    float A_log[row * row];
+    for(int i = 0; i < row * row; i++) {
+        A[i] = rand() % 10000 + 10;
+        A_log[i] = log(A[i]);
+    }
+    
+    LogDriver(A, B, row * row);
+    for(int i = 0; i < row * row; i++){
+        if(B[i] != A_log[i]) {
+            printf("TEST LOG FAILED\n");
+            return 0;
+        }
+    }
+    printf("TEST LOG SUCCESS\n");
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -527,9 +549,10 @@ int main() {
     failedCount += (TestSub() == 0);
     failedCount += (TestNegative() == 0);
     failedCount += (TestExp() == 0);
-    
+    failedCount += (TestLog() == 0);
+
     if (!failedCount) {
-        printf("\n\nALL TESTS PASSED SUCCESSFULLY\n");
+        printf("\n\n[!NOTICE!] ALL TESTS PASSED SUCCESSFULLY\n");
     } else {
         printf("\n\n[!NOTICE!] %d TESTS FAILED\n", failedCount);
     }
