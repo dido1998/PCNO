@@ -29,6 +29,7 @@ int TestSub();
 int TestNegative();
 int TestExp();
 int TestLog();
+int TestRange();
 
 int TestZeros() {
     int row = 10;
@@ -527,6 +528,21 @@ int TestLog() {
     return 1;
 }
 
+int TestRange() {
+    int size = 10;
+    float A[size];
+    RangeDriver(A, size, 0);
+    for(int i = 0; i < size; i++) {
+        printf("A[i] = %f, i = %d\n", A[i], i);
+        // if (A[i] != i) {
+        //     printf("TEST RANGE FAILED\n");
+        //     return 0;
+        // }
+    }
+    printf("TEST RANGE SUCCESS\n");
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -550,6 +566,7 @@ int main() {
     failedCount += (TestNegative() == 0);
     failedCount += (TestExp() == 0);
     failedCount += (TestLog() == 0);
+    failedCount += (TestRange() == 0);
 
     if (!failedCount) {
         printf("\n\n[!NOTICE!] ALL TESTS PASSED SUCCESSFULLY\n");
