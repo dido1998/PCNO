@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "utils.h"
 
 int TestZeros();
@@ -26,6 +27,7 @@ int TestBroadcast();
 int TestSetDiagonal();
 int TestSub();
 int TestNegative();
+int TestExp();
 
 int TestZeros() {
     int row = 10;
@@ -482,6 +484,27 @@ int TestNegative() {
     return 1;
 }
 
+int TestExp() {
+    int row = 10;
+    float A[row * row];
+    float B[row * row];
+    float A_exp[row * row];
+    for(int i = 0; i < row * row; i++) {
+        A[i] = rand() % 10000;
+        A_exp[i] = exp(A[i]);
+    }
+    
+    ExpDriver(A, B, row * row);
+    for(int i = 0; i < row * row; i++){
+        if(B[i] != A_exp[i]){
+            printf("TEST EXP FAILED\n");
+            return 0;
+        }
+    }
+    printf("TEST EXP SUCCESS\n");
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -503,7 +526,8 @@ int main() {
     failedCount += (TestSetDiagonal() == 0);
     failedCount += (TestSub() == 0);
     failedCount += (TestNegative() == 0);
-
+    failedCount += (TestExp() == 0);
+    
     if (!failedCount) {
         printf("\n\nALL TESTS PASSED SUCCESSFULLY\n");
     } else {
