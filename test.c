@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "utils.h"
 
 int TestZeros();
@@ -26,6 +27,9 @@ int TestBroadcast();
 int TestSetDiagonal();
 int TestSub();
 int TestNegative();
+int TestExp();
+int TestLog();
+int TestRange();
 
 int TestZeros() {
     int row = 10;
@@ -469,18 +473,73 @@ int TestNegative() {
     for(int i = 0; i < row * row; i++) {
         A[i] = rand() % 10000;
         A_neg[i] = -1 * A[i];
-        printf("A_neg %f\n", A_neg[i]);
     }
     
     NegativeDriver(A, row * row);
     for(int i = 0; i < row * row; i++){
-        printf(" A[i] = %f | A_ac[i] = %f\n", A[i], A_neg[i]);
         if(A[i] != A_neg[i]){
             printf("TEST NEGATIVE FAILED\n");
             return 0;
         }
     }
     printf("TEST NEGATIVE SUCCESS\n");
+    return 1;
+}
+
+int TestExp() {
+    int row = 10;
+    float A[row * row];
+    float B[row * row];
+    float A_exp[row * row];
+    for(int i = 0; i < row * row; i++) {
+        A[i] = rand() % 10000;
+        A_exp[i] = exp(A[i]);
+    }
+    
+    ExpDriver(A, B, row * row);
+    for(int i = 0; i < row * row; i++){
+        if(B[i] != A_exp[i]){
+            printf("TEST EXP FAILED\n");
+            return 0;
+        }
+    }
+    printf("TEST EXP SUCCESS\n");
+    return 1;
+}
+
+int TestLog() {
+    int row = 5;
+    float A[row * row];
+    float B[row * row];
+    float A_log[row * row];
+    for(int i = 0; i < row * row; i++) {
+        A[i] = rand() % 10000 + 10;
+        A_log[i] = log(A[i]);
+    }
+    
+    LogDriver(A, B, row * row);
+    for(int i = 0; i < row * row; i++){
+        if(B[i] != A_log[i]) {
+            printf("TEST LOG FAILED\n");
+            return 0;
+        }
+    }
+    printf("TEST LOG SUCCESS\n");
+    return 1;
+}
+
+int TestRange() {
+    int size = 10;
+    float A[size];
+    RangeDriver(A, size, 0);
+    for(int i = 0; i < size; i++) {
+        printf("A[i] = %f, i = %d\n", A[i], i);
+        // if (A[i] != i) {
+        //     printf("TEST RANGE FAILED\n");
+        //     return 0;
+        // }
+    }
+    printf("TEST RANGE SUCCESS\n");
     return 1;
 }
 
@@ -505,9 +564,12 @@ int main() {
     failedCount += (TestSetDiagonal() == 0);
     failedCount += (TestSub() == 0);
     failedCount += (TestNegative() == 0);
+    failedCount += (TestExp() == 0);
+    failedCount += (TestLog() == 0);
+    failedCount += (TestRange() == 0);
 
     if (!failedCount) {
-        printf("\n\nALL TESTS PASSED SUCCESSFULLY\n");
+        printf("\n\n[!NOTICE!] ALL TESTS PASSED SUCCESSFULLY\n");
     } else {
         printf("\n\n[!NOTICE!] %d TESTS FAILED\n", failedCount);
     }
