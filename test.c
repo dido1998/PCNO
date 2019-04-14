@@ -25,7 +25,7 @@ int TestMaxAS();
 int TestBroadcast();
 int TestSetDiagonal();
 int TestSub();
-
+int TestNegative();
 
 int TestZeros() {
     int row = 10;
@@ -46,7 +46,7 @@ int TestOnes() {
     int row = 10;
     int col = 10;
     float A[row*col];
-    ZerosDriver(A, row, col);
+    OnesDriver(A, row, col);
     for(int i = 0;i<row*col;i++){
         if(A[i]!=1.0){
             printf("TEST ONES FAILED\n");
@@ -460,6 +460,28 @@ int TestSub(){
     return 1;
 }
 
+int TestNegative() {
+    int row = 4;
+    float A[row * row];
+    float A_neg[row * row];
+    for(int i = 0; i < row * row; i++) {
+        A[i] = rand() % 10000;
+        A_neg[i] = -1 * A[i];
+        printf("A_neg %f\n", A_neg[i]);
+    }
+    
+    NegativeDriver(A, row * row);
+    for(int i = 0; i < row * row; i++){
+        printf(" A[i] = %f | A_ac[i] = %f\n", A[i], A_neg[i]);
+        if(A[i] != A_neg[i]){
+            printf("TEST NEGATIVE FAILED\n");
+            return 0;
+        }
+    }
+    printf("TEST NEGATIVE SUCCESS\n");
+    return 1;
+}
+
 int main() {
 
     int failedCount = 0;
@@ -481,6 +503,7 @@ int main() {
     failedCount += (TestBroadcast() == 0);
     failedCount += (TestSetDiagonal() == 0);
     failedCount += (TestSub() == 0);
+    failedCount += (TestNegative() == 0);
 
     if (!failedCount) {
         printf("\n\nALL TESTS PASSED SUCCESSFULLY\n");
