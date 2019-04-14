@@ -376,18 +376,20 @@ int TestMaxAS(){
 int TestBroadcast() {
     int row = 5;
     int col = 5;
-    float A[row];
+    float A[col];
     float B[row*col];
     float B_ac[row*col];
-    for(int i = 0; i< row;i++) {
-        A[i] = i+1;
-        for(int j = 0; j < col ; j++)
+    for(int i = 0; i< col;i++) {
+        
+        for(int j = 0; j < row ; j++)
         {
-            B_ac[i*col+j] = A[i];
+            A[i] = i+1;
+            B_ac[j*col+i] = A[i];
         }
     }
 
     BroadcastArrayToMatrixDriver(A, B, row, col);
+    
     for(int  i = 0;i<row*col;i++) {
         if(B[i]!=B_ac[i]){
             printf("TEST BROADCAST FAILED\n");
@@ -483,10 +485,9 @@ int TestNegative() {
 }
 
 int main() {
-
     int failedCount = 0;
 
-	failedCount += (TestZeros() == 0);
+    failedCount += (TestZeros() == 0);
     failedCount += (TestOnes() == 0);
     failedCount += (TestSquare() == 0);
     failedCount += (TestReduceSum() == 0);
@@ -510,4 +511,5 @@ int main() {
     } else {
         printf("\n\n[!NOTICE!] %d TESTS FAILED\n", failedCount);
     }
+
 }

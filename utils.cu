@@ -121,7 +121,8 @@ __global__ void SetDiagonal(float* A, float scalar) {
 }
 
 __global__ void BroadcastArrayToMatrix(float* A, float* B) {
-    B[blockIdx.x*blockDim.x + threadIdx.x] = A[blockIdx.x];
+    
+    B[blockIdx.x*blockDim.x + threadIdx.x] = A[threadIdx.x];
 }
 
 __global__ void Range(float* A, int n ) {
@@ -425,7 +426,7 @@ void MaxASDriver(float A[], float B, float C[], int row, int col) {
     
     dim3 BlockDim(col);
     dim3 GridDim(row);
-    DivideAS<<<GridDim, BlockDim>>>(d_a, d_c, B );
+    MaxAS<<<GridDim, BlockDim>>>(d_a, d_c, B );
     cudaMemcpy(C, d_c, sizeof(float)*size, cudaMemcpyDeviceToHost); 
     cudaDeviceSynchronize();
 
@@ -468,12 +469,13 @@ void SetDiagonalDriver(float A[], float B, int row, int col) {
 void BroadcastArrayToMatrixDriver(float A[], float B[], int row, int col) {
     int size = row*col;
     float *d_a, *d_b; 
-    cudaMalloc((void **) &d_a, sizeof(float)*row);
+
+    cudaMalloc((void **) &d_a, sizeof(float)*col);
     cudaMalloc((void**) &d_b, sizeof(float)*size);
-    cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_a, A, sizeof(float)*col, cudaMemcpyHostToDevice);
     dim3 BlockDim(col);
     dim3 GridDim(row);
-    BroadcastArrayToMatrix<<<col, row>>>(d_a, d_b);
+    BroadcastArrayToMatrix<<<GridDim, BlockDim>>>(d_a, d_b);
     cudaMemcpy(B, d_b, sizeof(float)*size, cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
 }

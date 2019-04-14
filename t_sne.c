@@ -222,6 +222,20 @@ void tsne(float X[][50], float Y[][], int num_examples, int num_dimension, int i
 		float Y_sub[num_examples*num_dimension];
 		SubDriver(Y, Y_stack, Y_sub, num_examples, num_dimension);
 		CopyDriver(Y_sub, Y, num_examples*num_dimension);
+		if((iter+1)%10==0) {
+			float div_p_q[num_examples*num_examples];
+			DivideDriver(P, Q, div_p_q, num_examples*num_examples);
+			float log[num_examples*num_examples];	
+			LogDriver(div_p_q, log, num_examples*num_examples);
+			float C;
+			ReduceSumDiver(log, &C, num_examples*num_examples);
+			printf("iteration %d: error is %f\n",iter+1, C );
+		}
+		if(iter==100){
+			float P_d[num_examples*num_examples];
+			DivideDriver(P, 4, P_d, num_examples*num_examples);
+			CopyDriver(P_d, P, num_examples*num_examples);
+		}
 	}
 }
 
