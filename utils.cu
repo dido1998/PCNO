@@ -1,7 +1,8 @@
-extern "C" {
-#include "utils.h"
-}
 
+#include "utils.h"
+
+#include <curand.h>
+#include <curand_kernel.h>
 
 __global__ void ReduceSum(float* A, float* B, int dim) {
     
@@ -17,29 +18,6 @@ __global__ void ReduceSum(float* A, float* B, int dim) {
             }
            
         }
-    }else if(dim==0) {
-        int col = threadIdx.x;
-        if(blockIdx.x == 0) {
-            for(int i=0;i<GridDim.x;i++) {
-                B[col]+= A[i * blockIdx.x + col];
-            }
-        }
-    }else {
-        __global__ float stash_sum[gridDim.x];
-        int row = blockIdx.x;
-        stash_sum[row] = 0;
-        if (threadIdx.x == 0) {
-            for(int  i =0;i<blockDim.x;i++) {
-                
-                stash_sum[row]+= A[row*blockDim.x + i]; 
-            }
-            *B = 0;
-            for(int i = 0;i<gridDim.x;i++) {
-                (*B)+= stash_sum[i];
-            }
-           
-        }
-        
     }
 
 }
@@ -58,8 +36,8 @@ __global__ void transpose(float* A, float* B)
 
 __global__ void dot(float* A, float* B, float* C, int col_size) {
     
-    for(int i = 0; i < col_a;i++) {
-        C[row*blockDim.x + threadIdx.x]+=A[row*col_size + i]*B[i*blockDim.x + threadIdx.x];
+    for(int i = 0; i < col_size;i++) {
+        C[blockIdx.x*blockDim.x + threadIdx.x]+=A[blockIdx.x*col_size + i]*B[i*blockDim.x + threadIdx.x];
     }
 }
 
@@ -105,6 +83,10 @@ __global__ void Exp(float* A, float* B) {
     B[blockIdx.x * blockDim.x + threadIdx.x] = expf(A[blockIdx.x * blockDim.x + threadIdx.x]);
 }
 
+__global__ void Log(float* A, float* B) {
+    B[blockIdx.x * blockDim.x + threadIdx.x] = logf(A[blockIdx.x * blockDim.x + threadIdx.x]);
+}
+
 __global__ void MultiplyAA(float* A, float* B, float* C) {
    
 
@@ -114,6 +96,10 @@ __global__ void MultiplyAA(float* A, float* B, float* C) {
 
 __global__ void DivideAS(float* A, float* B, float scalar) { 
     B[blockIdx.x * blockDim.x + threadIdx.x] =  A[blockIdx.x * blockDim.x + threadIdx.x] / scalar;
+}
+
+__global__ void Divide(float* A, float* B, float* C) { 
+    C[blockIdx.x * blockDim.x + threadIdx.x] =  A[blockIdx.x * blockDim.x + threadIdx.x] / B[blockIdx.x * blockDim.x + threadIdx.x];
 }
 
 __global__ void MaxAS(float* A, float* B, float scalar) {
@@ -146,7 +132,7 @@ __global__ void Randn(float* A) {
 
     int i = threadIdx.x + blockIdx.x * blockDim.x;
     curandState state;
-    curand_init(seed, i, 0, &state);
+    curand_init(4, i, 0, &state);
     A[i] = curand_uniform(&state);  
 }
 
@@ -154,8 +140,8 @@ __global__ void Copy(float* A, float* B){
     B[blockIdx.x*blockDim.x + threadIdx.x] = A[blockIdx.x*blockDim.x + threadIdx.x];
 }
 
-__global__ void Stack(float* A, float *B){
-    B[blockIdx.x*blockDim.x + threadIdx.x] = A[threadIdx];
+__global__ void Stack(float* A, float* B){
+    B[blockIdx.x*blockDim.x + threadIdx.x] = A[threadIdx.x];
 
 }
 
@@ -163,7 +149,7 @@ __global__ void IsGreaterThan(float* A, int* B, float scalar){
     if(A[blockIdx.x*blockDim.x + threadIdx.x] > scalar) {
         B[blockIdx.x*blockDim.x + threadIdx.x] = 1;
     }else{
-        B[blockIdx.x*blockDim.x + threadIdx.x] = 0
+        B[blockIdx.x*blockDim.x + threadIdx.x] = 0;
     }
 }
 
@@ -185,14 +171,14 @@ __global__ void IsNotEqual(int* A, int* B, int* C){
     }
 }
 
-__global__ SetWhereLessThan(float A[], float scalar1, float scalar2){
+__global__ void SetWhereLessThan(float* A, float scalar1, float scalar2){
     if(A[blockIdx.x*blockDim.x + threadIdx.x]<scalar1) {
-        B[blockIdx.x*blockDim.x + threadIdx.x] = scalar2;
+        A[blockIdx.x*blockDim.x + threadIdx.x] = scalar2;
     }
 }
 
 
-extern "C"
+
 void ReduceSumDriver(float A[], float B[], int rowa, int cola, int dimb, int dim) {
     
     float *d_a, *d_b; 
@@ -209,7 +195,7 @@ void ReduceSumDriver(float A[], float B[], int rowa, int cola, int dimb, int dim
 }
 
 
-extern "C"
+
 void SquareDriver(float A[], float B[], int rowa, int cola) {
     float *d_a, *d_b;
     cudaMalloc((void**)&d_a, sizeof(float)*rowa*cola);
@@ -223,7 +209,7 @@ void SquareDriver(float A[], float B[], int rowa, int cola) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void TransposeDriver(float A[], float B[], int rowa, int cola) {
     
     float *d_a, *d_b; 
@@ -239,7 +225,7 @@ void TransposeDriver(float A[], float B[], int rowa, int cola) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void DotDriver(float A[], float B[], float C[], int rowa, int cola, int rowb, int colb) {
     float *d_a, *d_b, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*rowa*cola);
@@ -249,12 +235,12 @@ void DotDriver(float A[], float B[], float C[], int rowa, int cola, int rowb, in
     cudaMemcpy(d_b, B, sizeof(float)*rowb*colb, cudaMemcpyHostToDevice);
     dim3 BlockDim(colb);
     dim3 GridDim(rowa);
-    dot<<<GridDim, BlockDim>>>(d_a, d_b, cola);
+    dot<<<GridDim, BlockDim>>>(d_a, d_b, d_c, cola);
     cudaMemcpy(C, d_c, sizeof(float)*rowa*colb, cudaMemcpyDeviceToHost); 
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void AddDriver(float A[], float B[], float C[], int row, int col) {
     float *d_a, *d_b, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*row*col);
@@ -269,7 +255,7 @@ void AddDriver(float A[], float B[], float C[], int row, int col) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void SubDriver(float A[], float B[], float C[], int row, int col) {
     float *d_a, *d_b, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*row*col);
@@ -284,10 +270,10 @@ void SubDriver(float A[], float B[], float C[], int row, int col) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void ZerosDriver(float A[], int row, int col) {
     float *d_a;
-    cudaMalloc((void**)&d_a, sizeof(float)*rowa*cola);
+    cudaMalloc((void**)&d_a, sizeof(float)*row*col);
     
     dim3 BlockDim(col);
     dim3 GridDim(row);
@@ -297,7 +283,7 @@ void ZerosDriver(float A[], int row, int col) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void OnesDriver(float A[], int row, int col) {
     float *d_a;
     cudaMalloc((void**)&d_a, sizeof(float)*row*col);
@@ -310,7 +296,7 @@ void OnesDriver(float A[], int row, int col) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void GetReducedRow(float A[], float B[], int row, int col, int rowtoget, int coltoremove) {
     int b_index = 0;
     for(int i = 0; i<col;i++) {
@@ -323,7 +309,7 @@ void GetReducedRow(float A[], float B[], int row, int col, int rowtoget, int col
 
 
 
-extern "C"
+
 
 void NegativeDriver(float A[], int size) {
     float *d_a;
@@ -337,7 +323,7 @@ void NegativeDriver(float A[], int size) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void ExpDriver(float A[], float B[], int size) {
     float *d_a, *d_b;
     cudaMalloc((void**)&d_a, sizeof(float)*size);
@@ -351,22 +337,29 @@ void ExpDriver(float A[], float B[], int size) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
-void ReduceSumDriver(float A[], float* B, int size) {
-    float *d_a;
+
+void LogDriver(float A[], float B[], int size) {
+    float *d_a, *d_b;
     cudaMalloc((void**)&d_a, sizeof(float)*size);
-   
+    cudaMalloc((void**)&d_b, sizeof(float)*size);
     cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
     dim3 BlockDim(size);
     dim3 GridDim(1);
-    ReduceSum<<<GridDim, BlockDim>>>(d_a, B, -1);
+    Log<<<GridDim, BlockDim>>>(d_a, d_b);
     cudaMemcpy(B, d_b, sizeof(float)*size, cudaMemcpyDeviceToHost); 
     
-    cudaDeviceSynchronize();   
+    cudaDeviceSynchronize();
 }
 
 
-extern "C"
+void ReduceSumDriver(float A[], float* B, int size) {
+    for(int i = 0;i<size;i++){
+        *B+=A[i];
+    }  
+}
+
+
+
 void MultiplyDriver(float A[], float B[], float C[], int size) {
     float *d_a, *d_b, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
@@ -381,7 +374,7 @@ void MultiplyDriver(float A[], float B[], float C[], int size) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void MultiplyDriver(float A[], float B, float C[], int size) {
     float *d_a, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
@@ -396,11 +389,11 @@ void MultiplyDriver(float A[], float B, float C[], int size) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void DivideDriver(float A[], float B, float C[], int size) {
     float *d_a, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
-    cudaMalloc((void **) &d_b, sizeof(float)*size);
+    cudaMalloc((void **) &d_c, sizeof(float)*size);
     
     cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
     
@@ -411,8 +404,8 @@ void DivideDriver(float A[], float B, float C[], int size) {
     cudaDeviceSynchronize();
 }
 
-extern "C" 
-void ReplaceRowExceptCol(float A[], float B[] int row, int col, int rowtoreplace, int colexcept) {
+ 
+void ReplaceRowExceptCol(float A[], float B[], int row, int col, int rowtoreplace, int colexcept) {
     int b_index = 0;
     for(int i=0;i<col;i++) {
         if(i==colexcept)
@@ -421,12 +414,12 @@ void ReplaceRowExceptCol(float A[], float B[] int row, int col, int rowtoreplace
     }
 }
 
-extern "C"
+
 void MaxASDriver(float A[], float B, float C[], int row, int col) {
     int size = row*col;
     float *d_a, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
-    cudaMalloc((void **) &d_b, sizeof(float)*size);
+    cudaMalloc((void **) &d_c, sizeof(float)*size);
     
     cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
     
@@ -438,12 +431,12 @@ void MaxASDriver(float A[], float B, float C[], int row, int col) {
 
 }
 
-extern "C"
+
 void DivideDriver( float B, float A[], float C[], int row, int col) {
     int size = row*col;
     float *d_a, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
-    cudaMalloc((void **) &d_b, sizeof(float)*size);
+    cudaMalloc((void **) &d_c, sizeof(float)*size);
     
     cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
     
@@ -455,7 +448,7 @@ void DivideDriver( float B, float A[], float C[], int row, int col) {
 }
 
 
-extern "C"
+
 void SetDiagonalDriver(float A[], float B, int row, int col) {
     int size = row*col;
     float *d_a; 
@@ -467,16 +460,16 @@ void SetDiagonalDriver(float A[], float B, int row, int col) {
     dim3 BlockDim(col);
     dim3 GridDim(row);
     SetDiagonal<<<GridDim, BlockDim>>>(d_a, B );
-    cudaMemcpy(C, d_c, sizeof(float)*size, cudaMemcpyDeviceToHost); 
+    cudaMemcpy(A, d_a, sizeof(float)*size, cudaMemcpyDeviceToHost); 
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void BroadcastArrayToMatrixDriver(float A[], float B[], int row, int col) {
     int size = row*col;
     float *d_a, *d_b; 
     cudaMalloc((void **) &d_a, sizeof(float)*row);
-    cudaMalloc((void**) &d_b, sizeof(float)*size)
+    cudaMalloc((void**) &d_b, sizeof(float)*size);
     cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
     dim3 BlockDim(col);
     dim3 GridDim(row);
@@ -485,7 +478,7 @@ void BroadcastArrayToMatrixDriver(float A[], float B[], int row, int col) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void RangeDriver(float A[], int size, int n) {
     
     float* d_a;
@@ -497,7 +490,7 @@ void RangeDriver(float A[], int size, int n) {
     cudaMemcpy(A, d_a, sizeof(float)*size, cudaMemcpyDeviceToHost);
 }
 
-extern "C"
+
 void RandnDriver(float A[], int row, int col) {
     int size = row*col;
     float *d_a;
@@ -508,7 +501,7 @@ void RandnDriver(float A[], int row, int col) {
     cudaMemcpy(A, d_a, sizeof(float)*size, cudaMemcpyDeviceToHost); 
 }
 
-void MultiplyDriver(float A[], float B, float C, int row, int col) {
+void MultiplyDriver(float A[], float B, float C[], int row, int col) {
     int size = row*col;
     
     float *d_a, *d_c; 
@@ -524,7 +517,7 @@ void MultiplyDriver(float A[], float B, float C, int row, int col) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void CopyDriver(float A[], float B[], int size){
     float *d_a,*d_b;
     cudaMalloc((void**)&d_a, sizeof(float)*size);
@@ -537,14 +530,14 @@ void CopyDriver(float A[], float B[], int size){
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void GetRow(float A[], float B[], int row, int col, int rownum) {
     for(int  i = 0 ;i<col;i++) {
         B[i] = A[rownum*col + i];
     }
 }
 
-extern "C"
+
 void SetRow(float A[], float B[], int row, int col, int rownum) {
     for(int  i = 0 ;i<col;i++) {
          A[rownum*col + i] = B[i];
@@ -552,14 +545,14 @@ void SetRow(float A[], float B[], int row, int col, int rownum) {
 }
 
 
-extern "C"
+
 void GetCol(float A[], float B[], int row, int col, int colnum) {
     for(int  i = 0 ;i<col;i++) {
         B[i] = A[i*col + colnum];
     }
 }
 
-extern "C"
+
 void StackDriver(float A[], float B[], int row, int col){
     int size = row*col;    
     float *d_a,*d_b;
@@ -573,12 +566,12 @@ void StackDriver(float A[], float B[], int row, int col){
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void IsGreaterThanDriver(float A[], float B, int* C, int size){
 
     
     float *d_a;
-    int *d_c 
+    int *d_c;
     cudaMalloc((void **) &d_a, sizeof(float)*size);
     cudaMalloc((void **) &d_c, sizeof(int)*size);
     
@@ -591,7 +584,7 @@ void IsGreaterThanDriver(float A[], float B, int* C, int size){
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void IsEqualDriver(int A[], int B[], int C[], int size){
     int *d_a, *d_b, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(int)*size);
@@ -608,7 +601,7 @@ void IsEqualDriver(int A[], int B[], int C[], int size){
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void IsNotEqualDriver(int A[], int B[], int C[], int size){
     int *d_a, *d_b, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(int)*size);
@@ -625,7 +618,7 @@ void IsNotEqualDriver(int A[], int B[], int C[], int size){
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void AddDriver(float A[], float B, float C[], int size) {
     float *d_a, *d_c; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
@@ -640,7 +633,7 @@ void AddDriver(float A[], float B, float C[], int size) {
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void MultiplyDriver(float A[], int B[], float C[], int size){
     float B_fl[size];
     for(int  i = 0; i<size;i++ ){
@@ -649,7 +642,7 @@ void MultiplyDriver(float A[], int B[], float C[], int size){
     MultiplyDriver(A, B_fl, C, size);
 }
 
-extern "C"
+
 void SetWhereLessThanDriver(float A[], float scalar1, float scalar2, int size){
     float *d_a; 
     cudaMalloc((void **) &d_a, sizeof(float)*size);
@@ -664,20 +657,35 @@ void SetWhereLessThanDriver(float A[], float scalar1, float scalar2, int size){
     cudaDeviceSynchronize();
 }
 
-extern "C"
+
 void ReduceMeanDriver(float A[], float B[], int row, int col, int dimb, int dim){
     float *d_a, *d_b, *d_c;
-    float C[col]; 
+   
     cudaMalloc((void **) &d_a, sizeof(float)*row*col);
     cudaMalloc((void **) &d_b, sizeof(float)*dimb);
     cudaMalloc((void **) &d_c, sizeof(float)*dimb);
-    cudaMemcpy(d_a, A, sizeof(float)*rowa*cola, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_a, A, sizeof(float)*row*col, cudaMemcpyHostToDevice);
 
     dim3 BlockDim(col);
     dim3 GridDim(row);
     ReduceSum<<<GridDim, BlockDim>>>(d_a, d_b, dim);
      
     DivideAS<<<1, col>>>(d_b, d_c, row);
-    cudaMemcpy(B, d_c, sizeof(float)*size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(B, d_c, sizeof(float)*row, cudaMemcpyDeviceToHost);
+    cudaDeviceSynchronize();
+}
+
+
+void DivideDriver(float A[], float B[], float C[], int size){
+    float *d_a, *d_b, *d_c; 
+    cudaMalloc((void **) &d_a, sizeof(float)*size);
+    cudaMalloc((void **) &d_b, sizeof(float)*size);
+    cudaMalloc((void **) &d_c, sizeof(float)*size);
+    cudaMemcpy(d_a, A, sizeof(float)*size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, B, sizeof(float)*size, cudaMemcpyHostToDevice);
+    dim3 BlockDim(size);
+    dim3 GridDim(1);
+    Divide<<<GridDim, BlockDim>>>(d_a, d_b, d_c);
+    cudaMemcpy(C, d_c, sizeof(float)*size, cudaMemcpyDeviceToHost); 
     cudaDeviceSynchronize();
 }

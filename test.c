@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "utils.h"
 
 void TestZeros() {
@@ -34,7 +35,7 @@ void TestSquare() {
     int col = 10;
     float A[row*col];
     for(int i = 0 ; i<row*col; i++) {
-        A[i] = rand() % 10.0;
+        A[i] = rand() % 10;
     }
     float B[row*col];
     SquareDriver(A, B, row, col);
@@ -195,7 +196,7 @@ void TestMulArSc(){
         B_ac[i] = A[i]*2;
         
     }
-    MultiplyDriver(A, 2, B, row, col);
+    MultiplyDriver(A, 2, B, row);
     for (int i = 0; i < row; ++i)
     {
         if(B[i]!=B_ac[i]){
@@ -275,7 +276,7 @@ void TestAdd(){
         C_ac[i] = A[i]+B[i];
         
     }
-    AddDriver(A, B, C, rowa, cola, rowb, colb);
+    AddDriver(A, B, C, rowa, cola);
     for(int i = 0;i<rowa*colb;i++){
         if(C[i]!=C_ac[i]){
             printf("TEST ADD FAILED\n");
@@ -295,9 +296,9 @@ void TestReduceSumVec2Sc(){
     }
     float B_ac = 0;
     for(int i = 0;i < row;i++) {
-      B_ac[i]+=A[i]; 
+      B_ac+=A[i]; 
     }
-    ReduceSumDriver(A, &B, size);
+    ReduceSumDriver(A, &B, row);
     if(B!=B_ac)
     {
         printf("TEST REDUCE SUM Vec2Sc FAILED\n");
@@ -359,8 +360,8 @@ void TestBroadcast() {
 void TestSetDiagonal(){
     int row = 10;
     int col = 10;
-    int A[row*col];
-    int B[row*col];
+    float A[row*col];
+    float B[row*col];
     for(int i = 0; i<row*col;i++){
         A[i] = i+1;
         
