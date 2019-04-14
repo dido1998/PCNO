@@ -24,6 +24,8 @@ int TestReduceSumVec2Sc();
 int TestMaxAS();
 int TestBroadcast();
 int TestSetDiagonal();
+int TestSub();
+
 
 int TestZeros() {
     int row = 10;
@@ -427,6 +429,37 @@ int TestSetDiagonal(){
     return 1;
 }
 
+int TestSub(){
+    int rowa = 6;
+    int cola = 9;
+    int rowb = 6;
+    int colb = 9;
+    float A[rowa*cola];
+    float B[rowb*colb];
+    float C_ac[rowa*colb];
+    float C[rowa*colb];
+    for(int i = 0;i<rowa*cola;i++) {
+        A[i] = i;
+    }
+    for(int i = 0;i<rowb*colb;i++) {
+        A[i] = i;
+    }
+
+    for(int i = 0; i<rowa*cola;i++ ){
+        C_ac[i] = A[i] - B[i];
+        
+    }
+    SubDriver(A, B, C, rowa, cola);
+    for(int i = 0;i<rowa*colb;i++){
+        if(C[i]!=C_ac[i]){
+            printf("TEST SUB FAILED\n");
+            return 0;
+        }
+    }
+    printf("TEST SUB SUCCESS\n");
+    return 1;
+}
+
 int main() {
 
     int failedCount = 0;
@@ -447,6 +480,7 @@ int main() {
     failedCount += (TestMaxAS() == 0);
     failedCount += (TestBroadcast() == 0);
     failedCount += (TestSetDiagonal() == 0);
+    failedCount += (TestSub() == 0);
 
     if (!failedCount) {
         printf("\n\nALL TESTS PASSED SUCCESSFULLY\n");
