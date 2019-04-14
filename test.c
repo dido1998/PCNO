@@ -42,6 +42,7 @@ int TestCopy();
 int TestStack();
 int TestIsGreaterThan();
 int TestIsEqual();
+int TestIsNotEqual();
 
 int TestZeros() {
     int row = 10;
@@ -659,6 +660,31 @@ int TestIsEqual() {
     return 1;
 }
 
+int TestIsNotEqual() {
+    int size = 10;
+    int A[size];
+    int B[size];
+    int R[size];
+    int R_kr[size];
+    for(int i = 0; i < size; i++) {
+        A[i] = rand() % 999;
+        if (A[i] != B[i]) {
+            R_kr[i] = 1;
+        } else {
+            R_kr[i] = 0;
+        }
+    }
+    IsNotEqualDriver(A, B, R, size);
+    for(int i = 0; i < size; i++) {
+        if (R[i] != R_kr[i]) {
+            printf(ANSI_COLOR_YELLOW "TEST ISNOTEQUAL FAILED\n" ANSI_COLOR_RESET);
+            return 0;
+        }
+    }
+    printf(ANSI_COLOR_GREEN "TEST ISNOTEQUAL SUCCESS\n" ANSI_COLOR_RESET);
+    return 1;
+}
+
 int main() {
     int failedCount = 0;
 
@@ -688,6 +714,7 @@ int main() {
     failedCount += (TestStack() == 0);
     failedCount += (TestIsGreaterThan() == 0);
     failedCount += (TestIsEqual() == 0);
+    failedCount += (TestIsNotEqual() == 0);
 
     printf(ANSI_COLOR_YELLOW "\n\n[RESULT] " ANSI_COLOR_RESET);
     if (!failedCount) {
