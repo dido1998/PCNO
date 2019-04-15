@@ -43,7 +43,7 @@ int TestSetWhereLessThan();
 int TestZeros() {
     int row = 10;
     int col = 10;
-    float A[row*col];
+    double A[row*col];
     ZerosDriver(A, row, col);
     for(int i = 0;i<row*col;i++){
         if(A[i]!=0.0){
@@ -58,7 +58,7 @@ int TestZeros() {
 int TestOnes() {
     int row = 10;
     int col = 10;
-    float A[row*col];
+    double A[row*col];
     OnesDriver(A, row, col);
     for(int i = 0;i<row*col;i++){
         if(A[i]!=1.0){
@@ -73,11 +73,11 @@ int TestOnes() {
 int TestSquare() {
     int row = 10;
     int col = 10;
-    float A[row*col];
+    double A[row*col];
     for(int i = 0 ; i<row*col; i++) {
         A[i] = rand() % 10;
     }
-    float B[row*col];
+    double B[row*col];
     SquareDriver(A, B, row, col);
     for(int i = 0;i<row*col;i++){
         if(B[i]!=A[i]*A[i]){
@@ -92,12 +92,12 @@ int TestSquare() {
 int TestReduceSum() {
     int row=10;
     int col=10;
-    float A[row*col];
-    float B[row];
+    double A[row*col];
+    double B[row];
     for(int i = 0;i<row*col;i++) {
         A[i] = i+1;
     }
-    float B_ac[row];
+    double B_ac[row];
     for(int i = 0;i < row;i++) {
         B_ac[i] = 0;
         for(int j = 0; j < col; j++){
@@ -119,12 +119,12 @@ int TestReduceSum() {
 int TestReduceMean() {
     int row=10;
     int col=10;
-    float A[row*col];
-    float B[row];
+    double A[row*col];
+    double B[row];
     for(int i = 0;i<row*col;i++) {
         A[i] = i+1;
     }
-    float B_ac[row];
+    double B_ac[row];
     for(int i = 0;i < row;i++) {
         B_ac[i] = 0;
         for(int j = 0; j < col; j++){
@@ -144,14 +144,14 @@ int TestReduceMean() {
 }
 
 int TestTranspose() {
-    int row=10;
-    int col=9;
-    float A[row*col];
-    float B[row*col];
+    int row=500;
+    int col=50;
+    double A[row*col];
+    double B[row*col];
     for(int i = 0;i<row*col;i++) {
         A[i] = i+1;
     }
-    float B_ac[row*col];
+    double B_ac[row*col];
     for(int i = 0;i < row;i++) {
 
         for(int j = 0; j < col; j++){
@@ -159,12 +159,17 @@ int TestTranspose() {
         }
     }
     TransposeDriver(A, B, row, col);
-    for (int i = 0; i < row; ++i)
-    {
-        if(B[i]!=B_ac[i]){
-            printf(ANSI_COLOR_YELLOW "TEST TRANSPOSE FAILED\n" ANSI_COLOR_RESET);
-            return 0; 
+    for(int  i = 0; i < row*col; i++){
+        if(i%col==0){
+            printf("\n");
         }
+        printf("%f\t",A[i] );
+    }
+    for(int  i = 0; i < row*col; i++){
+        if(i%row==0){
+            printf("\n");
+        }
+        printf("%f ",B[i] );
     }
     printf(ANSI_COLOR_GREEN "TEST TRANSPOSE SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
@@ -175,10 +180,10 @@ int TestDot() {
     int cola = 5;
     int rowb = 5;
     int colb = 4;
-    float A[rowa*cola];
-    float B[rowb*colb];
-    float C_ac[rowa*colb];
-    float C[rowa*colb];
+    double A[rowa*cola];
+    double B[rowb*colb];
+    double C_ac[rowa*colb];
+    double C[rowa*colb];
     for(int i = 0;i<rowa*cola;i++) {
         A[i] = i;
     }
@@ -208,12 +213,12 @@ int TestDot() {
 int TestMulMatSc(){
     int row=10;
     int col=9;
-    float A[row*col];
-    float B[row*col];
+    double A[row*col];
+    double B[row*col];
     for(int i = 0;i<row*col;i++) {
         A[i] = i+1;
     }
-    float B_ac[row*col];
+    double B_ac[row*col];
     for(int i = 0;i < row*col;i++) {
         B_ac[i] = A[i]*2;
         
@@ -233,12 +238,12 @@ int TestMulMatSc(){
 int TestMulArSc(){
     int row=10;
     
-    float A[row];
-    float B[row];
+    double A[row];
+    double B[row];
     for(int i = 0;i<row;i++) {
         A[i] = i+1;
     }
-    float B_ac[row];
+    double B_ac[row];
     for(int i = 0;i < row;i++) {
         B_ac[i] = A[i]*2;
         
@@ -258,12 +263,12 @@ int TestMulArSc(){
 int TestDivArSc(){
     int row=10;
     
-    float A[row];
-    float B[row];
+    double A[row];
+    double B[row];
     for(int i = 0;i<row;i++) {
         A[i] = i+1;
     }
-    float B_ac[row];
+    double B_ac[row];
     for(int i = 0;i < row;i++) {
         B_ac[i] = A[i]/2;
         
@@ -283,12 +288,12 @@ int TestDivArSc(){
 int TestDivScMat(){
     int row=10;
     int col = 10;
-    float A[row*col];
-    float B[row*col];
+    double A[row*col];
+    double B[row*col];
     for(int i = 0;i<row*col;i++) {
         A[i] = i+1;
     }
-    float B_ac[row*col];
+    double B_ac[row*col];
     for(int i = 0;i < row*col;i++) {
         B_ac[i] = 2/A[i];
         
@@ -311,10 +316,10 @@ int TestAdd(){
     int cola = 5;
     int rowb = 4;
     int colb = 5;
-    float A[rowa*cola];
-    float B[rowb*colb];
-    float C_ac[rowa*colb];
-    float C[rowa*colb];
+    double A[rowa*cola];
+    double B[rowb*colb];
+    double C_ac[rowa*colb];
+    double C[rowa*colb];
     for(int i = 0;i<rowa*cola;i++) {
         A[i] = i;
     }
@@ -340,12 +345,12 @@ int TestAdd(){
 int TestReduceSumVec2Sc(){
     int row=10;
     
-    float A[row];
-    float B;
+    double A[row];
+    double B;
     for(int i = 0;i<row;i++) {
         A[i] = i+1;
     }
-    float B_ac = 0;
+    double B_ac = 0;
     for(int i = 0;i < row;i++) {
       B_ac+=A[i]; 
     }
@@ -363,9 +368,9 @@ int TestReduceSumVec2Sc(){
 int TestMaxAS(){
     int row = 4;
     int col =4;
-    float A[row*col];
-    float B[row*col];
-    float B_ac[row*col];
+    double A[row*col];
+    double B[row*col];
+    double B_ac[row*col];
     for(int  i = 0;i<row*col;i++) {
         A[i] = i+1.0;
         if(A[i]>3.0)
@@ -389,9 +394,9 @@ int TestMaxAS(){
 int TestBroadcast() {
     int row = 5;
     int col = 5;
-    float A[col];
-    float B[row*col];
-    float B_ac[row*col];
+    double A[col];
+    double B[row*col];
+    double B_ac[row*col];
     for(int i = 0; i< col;i++) {
         
         for(int j = 0; j < row ; j++)
@@ -416,8 +421,8 @@ int TestBroadcast() {
 int TestSetDiagonal(){
     int row = 10;
     int col = 10;
-    float A[row*col];
-    float B[row*col];
+    double A[row*col];
+    double B[row*col];
     for(int i = 0; i<row*col;i++){
         A[i] = i+1;
         
@@ -449,10 +454,10 @@ int TestSub(){
     int cola = 9;
     int rowb = 6;
     int colb = 9;
-    float A[rowa*cola];
-    float B[rowb*colb];
-    float C_ac[rowa*colb];
-    float C[rowa*colb];
+    double A[rowa*cola];
+    double B[rowb*colb];
+    double C_ac[rowa*colb];
+    double C[rowa*colb];
     for(int i = 0;i<rowa*cola;i++) {
         A[i] = i;
     }
@@ -477,8 +482,8 @@ int TestSub(){
 
 int TestNegative() {
     int row = 4;
-    float A[row * row];
-    float A_neg[row * row];
+    double A[row * row];
+    double A_neg[row * row];
     for(int i = 0; i < row * row; i++) {
         A[i] = rand() % 10000;
         A_neg[i] = -1 * A[i];
@@ -499,9 +504,9 @@ int TestNegative() {
 
 int TestExp() {
     int row = 10;
-    float A[row * row];
-    float B[row * row];
-    float A_exp[row * row];
+    double A[row * row];
+    double B[row * row];
+    double A_exp[row * row];
     for(int i = 0; i < row * row; i++) {
         A[i] = rand() % 10000;
         A_exp[i] = exp(A[i]);
@@ -520,9 +525,9 @@ int TestExp() {
 
 int TestLog() {
     int row = 5;
-    float A[row * row];
-    float B[row * row];
-    float A_log[row * row];
+    double A[row * row];
+    double B[row * row];
+    double A_log[row * row];
     for(int i = 0; i < row * row; i++) {
         A[i] = rand() % 10000 + 10;
         A_log[i] = log(A[i]);
@@ -541,11 +546,11 @@ int TestLog() {
 
 int TestRange() {
     int size = 10;
-    float A[size];
+    double A[size];
     RangeDriver(A, size, 0);
     for(int i = 0; i < size; i++) {
 
-        if (A[i] != (float)i) {
+        if (A[i] != (double)i) {
             printf(ANSI_COLOR_YELLOW "TEST RANGE FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
@@ -557,7 +562,7 @@ int TestRange() {
 int TestRandn() {
     int row = 6;
     int col = 9;
-    float A[row * col];
+    double A[row * col];
     RandnDriver(A, row, col);
     for(int i = 0; i < row * col; i++) {
         if (A[i] < 0 && A[i] > 1) {
@@ -571,8 +576,8 @@ int TestRandn() {
 
 int TestCopy() {
     int size = 69;
-    float A[size];
-    float B[size];
+    double A[size];
+    double B[size];
     for(int i = 0; i < size; i++) {
         A[i] = i + 420;
     }
@@ -590,8 +595,8 @@ int TestCopy() {
 int TestStack() {
     int row = 6;
     int col = 9;
-    float A[row * col];
-    float B[row * col];
+    double A[row * col];
+    double B[row * col];
     for(int i = 0; i < row * col; i++) {
         A[i] = i + 420;
     }
@@ -611,10 +616,10 @@ int TestStack() {
 
 int TestIsGreaterThan() {
     int size = 10;
-    float A[size];
+    double A[size];
     int R[size];
     int R_kr[size];
-    float chonk = 500.0;
+    double chonk = 500.0;
     for(int i = 0; i < size; i++) {
         A[i] = rand() % 999;
         if (A[i] > chonk) {
@@ -629,7 +634,6 @@ int TestIsGreaterThan() {
             printf(ANSI_COLOR_YELLOW "TEST ISGREATERTHAN FAILED\n" ANSI_COLOR_RESET);
             return 0;
         }
->>>>>>> 345660adb28089e3c35de5e811451a223af0a2e1
     }
     printf(ANSI_COLOR_GREEN "TEST ISGREATERTHAN SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
@@ -687,10 +691,10 @@ int TestIsNotEqual() {
 
 int TestSetWhereLessThan() {
     int size = 10;
-    float A[size];
-    float A_kr[size]; 
-    float chonkTest = 500.0;
-    float chonkSet = 1337.0;
+    double A[size];
+    double A_kr[size]; 
+    double chonkTest = 500.0;
+    double chonkSet = 1337.0;
     for(int i = 0; i < size; i++) {
         A[i] = rand() % 999;
         if (A[i] < chonkTest) {
