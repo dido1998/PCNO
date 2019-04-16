@@ -159,17 +159,11 @@ int TestTranspose() {
         }
     }
     TransposeDriver(A, B, row, col);
-    for(int  i = 0; i < row*col; i++){
-        if(i%col==0){
-            printf("\n");
+    for(int i = 0;i<row*col;i++){
+        if(B[i]!=B_ac[i]){
+            printf(ANSI_COLOR_YELLOW "TEST TRANSPOSE FAILED\n" ANSI_COLOR_RESET);
+            return 0;
         }
-        printf("%f\t",A[i] );
-    }
-    for(int  i = 0; i < row*col; i++){
-        if(i%row==0){
-            printf("\n");
-        }
-        printf("%f ",B[i] );
     }
     printf(ANSI_COLOR_GREEN "TEST TRANSPOSE SUCCESS\n" ANSI_COLOR_RESET);
     return 1;
